@@ -7,8 +7,8 @@ const pool = mysql.createPool({
   database: "hairzaman"
 });
 
-const promisePool = pool.promise();
+const db = pool.promise();
 
-export default promisePool;
+export default db;
 
 

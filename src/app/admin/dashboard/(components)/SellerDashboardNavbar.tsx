@@ -17,19 +17,19 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
         <Dialog>
           <SheetTrigger className="min-[1024px]:hidden p-2 transition">
             <HamburgerMenuIcon />
-            <Link href="/seller/dashboard">
+            <Link href="/admin/dashboard">
               <span className="sr-only">Acceuil</span>
             </Link>
           </SheetTrigger>
           <SheetContent side="left">
             <SheetHeader>
-              <Link href="/seller/dashboard">
+              <Link href="/admin/dashboard">
                 <SheetTitle>Admin Dashboard</SheetTitle>
               </Link>
             </SheetHeader>
             <div className="flex flex-col space-y-3 mt-[1rem]">
               <DialogClose asChild>
-                <Link href="/seller/dashboard">
+                <Link href="/admin/dashboard">
                   <Button variant="outline" className="w-full">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
@@ -37,7 +37,7 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
                 </Link>
               </DialogClose>
               <DialogClose asChild>
-                <Link href="/seller/dashboard/products">
+                <Link href="">
                   <Button variant="outline" className="w-full">
                     <Box className="mr-2 h-4 w-4" />
                     Produits
@@ -45,7 +45,7 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
                 </Link>
               </DialogClose>
               <DialogClose asChild>
-                <Link href="/seller/dashboard/orders">
+                <Link href="/admin/orders">
                   <Button variant="outline" className="w-full">
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     Commandes
@@ -54,7 +54,7 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
               </DialogClose>
               <Separator className="my-3" />
               <DialogClose asChild>
-                <Link href="/seller/dashboard/settings">
+                <Link href="">
                   <Button variant="outline" className="w-full">
                     <Settings className="mr-2 h-4 w-4" />
                     Paramètres

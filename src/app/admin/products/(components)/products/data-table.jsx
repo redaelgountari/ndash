@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios"; // Ensure axios is imported
 import {
   ColumnFiltersState,
   SortingState,
@@ -35,39 +36,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const data = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-];
-
 const columns = [
   {
     id: "select",
@@ -92,39 +60,41 @@ const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "Date_de_Livraison",
+    header: () => <div>Date de Livraison</div>,
+    cell: ({ row }) => <div>{row.getValue("Date_de_Livraison")}</div>,
+  },
+  {
+    accessorKey: "CASH_COLLECTED",
+    header: () => <div>CASH COLLECTED</div>,
+    cell: ({ row }) => <div>{row.getValue("CASH_COLLECTED")}</div>,
+  },
+  {
+    accessorKey: "Prestation Transport (TVA Incluse)",
+    header: () => <div>Prestation Transport TVA Incluse</div>,
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div>{row.getValue("Prestation_Transport_TVA_Incluse")}</div>
     ),
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Email
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    accessorKey: "TOTAL",
+    header: () => <div>TOTAL</div>,
+    cell: ({ row }) => <div>{row.getValue("TOTAL")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
+    accessorKey: "SIZE",
+    header: () => <div>SIZE</div>,
+    cell: ({ row }) => <div>{row.getValue("SIZE")}</div>,
+  },
+  {
+    accessorKey: "POIDS",
+    header: () => <div>POIDS</div>,
+    cell: ({ row }) => <div>{row.getValue("POIDS")}</div>,
+  },
+  {
+    accessorKey: "STATUS",
+    header: () => <div>STATUS</div>,
+    cell: ({ row }) => <div>{row.getValue("STATUS")}</div>,
   },
   {
     id: "actions",
@@ -158,10 +128,23 @@ const columns = [
 ];
 
 export default function DataTableDemo() {
+  const [data, setData] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/recive");
+        setData(response.data[0]);
+        console.log(response.data[0])
+      } catch (err) {
+        console.log("error", err);
+      }
+    })();
+  }, []);
 
   const table = useReactTable({
     data,
@@ -186,10 +169,10 @@ export default function DataTableDemo() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() ?? "")}
+          placeholder="Filter TOTALE..."
+          value={table.getColumn("TOTALE")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("TOTALE")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -255,10 +238,7 @@ export default function DataTableDemo() {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

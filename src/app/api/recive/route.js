@@ -1,13 +1,12 @@
-
+import db from '@/lib/db';
 import { NextResponse } from 'next/server';
-import promisePool from '@/lib/db';
 
-export async function post() {
+export async function GET(req) {
   try {
-    const [rows] = await promisePool.query('SELECT * FROM users');
-    return NextResponse.json(rows, { status: 200 });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    const getQuery = await db.query(`SELECT * FROM reports`);
+    return NextResponse.json(getQuery);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return new NextResponse('Error fetching data', { status: 500 });
   }
 }

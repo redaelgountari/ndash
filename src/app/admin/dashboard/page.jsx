@@ -1,8 +1,6 @@
 import React from 'react';
-import DataTableimport from "../orders/(componentimp)/Tabledata";
-import Export from "../orders/(componentimp)/Export";
+import Dash from './Dash'
 import axios from 'axios';
-import "./style.css"; 
 async function getData() {
     try {
         const response = await axios.get('http://localhost:3000/api/recive');
@@ -31,8 +29,7 @@ export default async function Page() {
 
     return (
         <div>
-            <DataTableimport data={data.data} titles={data.titles} />
-            {/* <Export data={data.data} /> */}
+           <Dash data={data.data}/> 
         </div>
     );
     

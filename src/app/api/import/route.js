@@ -9,32 +9,38 @@ const excelSerialDateToDate = (serial) => {
 };
 
 const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;  // Format: YYYY-MM-DD
 };
+
 
 export async function POST(req) {
     try {
-        const data = await req.json();
+        const { data, title } = await req.json();
         const queries = data.map(async (row) => {
             const date = excelSerialDateToDate(row.Date_de_Livraison);
             const formattedDate = formatDate(date);
-            const transport = row.Prestation_Transport_TVA_Incluse;
-            let intraxinter = "UNKNOWN";
+            const transport = row.Prestation_Transport_TVA_Incluse.toFixed(2);
+            let intraxinter = `UNKNOWN ${transport}`;
 
-            if (transport === 21.81) {
-                intraxinter = "INTER";
-            } else if (transport === 31.72) {
+            if (transport == 21.81 || transport == 19.30) {
                 intraxinter = "INTRA";
+            } else if (transport == 31.72 || transport == 28.07) {
+                intraxinter = "INTER";
             }
 
-            const verifyQuery = db.query(`SELECT COUNT(Tracking_ID_CD) FROM reports WHERE Tracking_ID_CD = "${row.Tracking_ID_CD}"`);
-            const verifyQuery2 = row.Tracking_ID_CD
-            if (verifyQuery2.length > 0,verifyQuery > 0) {
+            // Verify if the `Tracking_ID_CD` already exists
+            const verifyQuery = await db.query(
+                `SELECT COUNT(*) as count FROM reports WHERE Tracking_ID_CD = ?`,
+                [row.Tracking_ID_CD]
+            );
+            const isDuplicate = verifyQuery[0].count > 0;
+
+            if (isDuplicate) {
                 console.log(`Doublon trouvé pour Tracking_ID_CD : ${row.Tracking_ID_CD}`);
-                throw new Error(`Tracking ID ${row.Tracking_ID_CD} already exists`);
+                throw new Error(`Tracking ID ${row.Tracking_ID_CD} déjà existant`);
             }
 
             await db.query(
@@ -42,20 +48,22 @@ export async function POST(req) {
                     Tracking_ID_CD, Tracking_ID_Client, Date_de_Livraison, INTRA_OU_INTER,
                     CASH_COLLECTED, Prestation_Transport_TVA_Incluse, Prestation_CRBT_TVA_Incluse,
                     Prestation_de_Collecte_TVA_Incluse, Prestation_Assurance_TVA_Incluse, 
-                    Supplement_de_poids, TOTAL, Statut, Client, SIZE, POIDS, created_at, updated_at
+                    Supplement_de_poids, TOTAL, Statut, Client, SIZE, POIDS, titre,
+                    Status
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
                     row.Tracking_ID_CD, row.Tracking_ID_Client, formattedDate, intraxinter,
                     row.CASH_COLLECTED, row.Prestation_Transport_TVA_Incluse, row.Prestation_CRBT_TVA_Incluse,
                     row.Prestation_de_Collecte_TVA_Incluse, row.Prestation_Assurance_TVA_Incluse, 
-                    row.Supplement_de_poids, row.TOTAL, row.Statut, row.Client, row.SIZE, row.POIDS, 
-                    row.created_at, row.updated_at
+                    row.Supplement_de_poids, row.TOTAL, row.Statut, row.Client, row.SIZE, row.POIDS, title,
+                    row.Statut
                 ]
             );
         });
 
         await Promise.all(queries);
         const getQuery = await db.query(`SELECT * FROM reports`);
-        return new NextResponse(JSON.stringify(getQuery), { status: 200 });
+        const getTitles = await db.query(`SELECT DISTINCT titre FROM reports`);
+        return NextResponse.json({ data: getQuery, titles: getTitles });
     } catch (error) {
         console.error('Error inserting data:', error);
         return new NextResponse(JSON.stringify({ error: error.message }), { status: 500 });

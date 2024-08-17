@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/admin/products/(components)/products/data-table.jsx", "src/app/admin/products/page.jsx", "src/app/api/import/route.js", "src/app/admin/orders/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/admin/products/(components)/products/data-table.jsx", "src/app/admin/products/page.jsx", "src/app/api/import/route.js", "src/app/admin/orders/page.jsx", "src/app/admin/dashboard/page.jsx", "src/app/admin/dashboard/(components)/ChartQ.jsx", "src/app/page.tsx", "src/app/admin/dashboard/(components)/Chart.jsx", "src/app/admin/layout.tsx", "src/app/admin/dashboard/Dash.jsx", "auth.config.js", "middleware.js"],
   "exclude": ["node_modules"]
 }

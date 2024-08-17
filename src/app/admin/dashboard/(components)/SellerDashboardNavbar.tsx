@@ -36,14 +36,14 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
                   </Button>
                 </Link>
               </DialogClose>
-              <DialogClose asChild>
+              {/* <DialogClose asChild>
                 <Link href="">
                   <Button variant="outline" className="w-full">
                     <Box className="mr-2 h-4 w-4" />
                     Produits
                   </Button>
                 </Link>
-              </DialogClose>
+              </DialogClose> */}
               <DialogClose asChild>
                 <Link href="/admin/orders">
                   <Button variant="outline" className="w-full">
@@ -52,7 +52,7 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
                   </Button>
                 </Link>
               </DialogClose>
-              <Separator className="my-3" />
+              {/* <Separator className="my-3" />
               <DialogClose asChild>
                 <Link href="">
                   <Button variant="outline" className="w-full">
@@ -60,7 +60,7 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
                     Paramètres
                   </Button>
                 </Link>
-              </DialogClose>
+              </DialogClose> */}
             </div>
           </SheetContent>
         </Dialog>

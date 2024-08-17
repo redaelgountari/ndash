@@ -115,14 +115,14 @@ export default function Login() {
               <Button type="submit" className="w-full">
                 Login
               </Button>
-              <Button type="button" className="w-full bg-white border-black text-black">
+              {/* <Button type="button" className="w-full bg-white border-black text-black">
                 Connect with google 
-              </Button>
+              </Button> */}
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Link href="/register">New here? Register</Link>
+          {/* <Link href="/register">New here? Register</Link> */}
         </CardFooter>
       </Card>
     </div>

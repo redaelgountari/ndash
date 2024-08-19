@@ -20,6 +20,10 @@ export async function POST(req) {
     try {
         const { data, title } = await req.json();
         const queries = data.map(async (row) => {
+            if (!row.Tracking_ID_CD) {
+                return;
+            }
+
             const date = excelSerialDateToDate(row.Date_de_Livraison);
             const formattedDate = formatDate(date);
             const transport = row.Prestation_Transport_TVA_Incluse.toFixed(2);
@@ -31,7 +35,6 @@ export async function POST(req) {
                 intraxinter = "INTER";
             }
 
-            // Verify if the `Tracking_ID_CD` already exists
             const verifyQuery = await db.query(
                 `SELECT COUNT(*) as count FROM reports WHERE Tracking_ID_CD = ?`,
                 [row.Tracking_ID_CD]
@@ -64,7 +67,7 @@ export async function POST(req) {
         const getQuery = await db.query(`SELECT * FROM reports`);
         const getTitles = await db.query(`SELECT DISTINCT titre FROM reports`);
         return NextResponse.json({ data: getQuery, titles: getTitles });
-    } catch (error) {
+    }  catch (error) {
         console.error('Error inserting data:', error);
         return new NextResponse(JSON.stringify({ error: error.message }), { status: 500 });
     }

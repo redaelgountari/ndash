@@ -107,63 +107,82 @@ export default function DataTableimport(props) {
     "Statut": "Statut"
   };
  
-const handleFileUpload = (e) => {
-    const reader = new FileReader();
-    reader.readAsBinaryString(e.target.files[0]);
-    const file = e.target.files[0];
-    const fileName = file.name;
-    reader.onload = (e) => {
-        const fileData = e.target.result;
-        const workbook = XLSX.read(fileData, { type: "binary" });
+  const handleFileUpload = (e) => {
+    const files = e.target.files; // Get all selected files
+    const fileReaders = []; // Array to hold FileReader instances
 
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
 
-        console.log("Raw data:", parsedData);
+        fileReaders.push(new Promise((resolve, reject) => {
+            reader.onload = (event) => {
+                const fileData = event.target.result;
+                const workbook = XLSX.read(fileData, { type: "binary" });
 
-        const trackingIdCdIndex = parsedData.findIndex(row => row.includes("Tracking ID CD"));
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        if (trackingIdCdIndex === -1) {
-          Swal.fire({
-            title: 'Error!',
-            text: "Donner nom compatible ou non valide",
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
-            return;
-        }
+                const trackingIdCdIndex = parsedData.findIndex(row => row.includes("Tracking ID CD"));
 
-        const tableData = parsedData.slice(trackingIdCdIndex);
-
-        const filteredData = tableData.slice(1).map((row) => {
-            let filteredRow = {};
-
-            desiredColumns.forEach((colIndex) => {
-                let colKey = tableData[0][colIndex];
-
-                if (colKey) {
-                    const normalizedColKey = colKey.replace(/\s+/g, ' ').trim().toLowerCase();
-
-                    if (normalizedColKey.includes("prestation transport")) {
-                        colKey = "Prestation_Transport_TVA_Incluse";
-                    }
-                    if (normalizedColKey == "total ht") {
-                        colKey = "TOTAL";
-                    }
-
-                    if (row[colIndex] !== undefined) {
-                        filteredRow[columnMapping[colKey] || colKey] = row[colIndex];
-                    }
+                if (trackingIdCdIndex === -1) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "Donner nom compatible ou non valide",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    reject(new Error("Invalid file format"));
+                    return;
                 }
+
+                const tableData = parsedData.slice(trackingIdCdIndex);
+
+                const filteredData = tableData.slice(1).map((row) => {
+                    let filteredRow = {};
+
+                    desiredColumns.forEach((colIndex) => {
+                        let colKey = tableData[0][colIndex];
+
+                        if (colKey) {
+                            const normalizedColKey = colKey.replace(/\s+/g, ' ').trim().toLowerCase();
+
+                            if (normalizedColKey.includes("prestation transport")) {
+                                colKey = "Prestation_Transport_TVA_Incluse";
+                            }
+                            if (normalizedColKey == "total ht") {
+                                colKey = "TOTAL";
+                            }
+
+                            if (row[colIndex] !== undefined) {
+                                filteredRow[columnMapping[colKey] || colKey] = row[colIndex];
+                            }
+                        }
+                    });
+
+                    return filteredRow;
+                });
+
+                resolve({ data: filteredData, title: file.name });
+            };
+
+            reader.onerror = (error) => reject(error);
+            reader.readAsBinaryString(file);
+        }));
+    }
+
+    // Wait for all files to be processed
+    Promise.all(fileReaders)
+        .then(results => {
+            results.forEach(({ data, title }) => {
+                sendDataToServer({ data, title });
+                console.log({ data, title });
             });
-
-            return filteredRow;
+        })
+        .catch(error => {
+            console.error("Error reading files:", error);
         });
-
-        sendDataToServer({ data: filteredData, title: fileName });
-        console.log({ data: filteredData, title: fileName });
-    };
 };
 
 
@@ -187,24 +206,23 @@ const handleFileUpload = (e) => {
  )
 const sendDataToServer = async (dataToSend) => {
   try {
-      const response = await axios.post('/api/import', dataToSend);
-      setData(response.data.data[0]);
-      settitre(response.data.titles[0])
-      console.log('Données envoyées avec succès au serveur :', response.data);
-  } catch (error) {
-      console.error('Erreur lors de l\'envoi des données au serveur:', error);
-      let message = "";
-      if(error.response?.data?.error.includes("Duplicate entry")){
-         message="Donne déjà existant"
-      }
-     
-      Swal.fire({
-          title: 'Error!',
-          text: message,
-          icon: 'error',
-          confirmButtonText: 'OK'
-      });
-  }
+    const response = await axios.post('/api/import', dataToSend);
+    setData(response.data.data[0]);
+    settitre(response.data.titles[0]);
+    console.log('Données envoyées avec succès au serveur :', response.data);
+} catch (error) {
+    console.error('Erreur lors de l\'envoi des données au serveur:', error);
+    
+    let message = error.response?.data?.error || 'Erreur inconnue'; 
+
+    Swal.fire({
+        title: 'Error!',
+        text: message,
+        icon: 'error',
+        confirmButtonText: 'OK'
+    });
+}
+
 };
 
 const handlechangedatavalue = (value) => {
@@ -456,7 +474,7 @@ const handleSubmit = (e) => {
 
   return (
     <div className="w-full responsivity" >
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} multiple />
       <div className="flex items-center py-4">
         <Input
           placeholder={filterwith.replace(/_/g, " ")}

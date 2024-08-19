@@ -100,7 +100,7 @@ const Component = ({ data, time }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Stacked</CardTitle>
+        <CardTitle>Completed or Returned to send</CardTitle>
         <CardDescription>Showing total stats</CardDescription>
       </CardHeader>
       <CardContent>

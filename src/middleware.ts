@@ -1,15 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("next-auth.session-token");
 
-  if (token) {
-    return NextResponse.next();
+  if (token && request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
-  return NextResponse.redirect(new URL("/", request.url));
+  if (!token && request.nextUrl.pathname.startsWith("/admin")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/dashboard", "/admin/orders"],
+  matcher: ["/", "/admin/:path*"],
 };

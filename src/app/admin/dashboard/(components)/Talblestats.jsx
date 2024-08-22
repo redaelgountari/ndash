@@ -38,7 +38,7 @@ export default function Talblestats(props) {
           <CardHeader className="px-7">
             <CardTitle>Orders</CardTitle>
             <CardDescription>
-              Recent orders from your store.
+            Commandes récentes de votre boutique.
             </CardDescription>
           </CardHeader>
           <CardContent>

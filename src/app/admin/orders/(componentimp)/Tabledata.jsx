@@ -474,8 +474,8 @@ const handleSubmit = (e) => {
 
   return (
     <div className="w-full responsivity" >
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} multiple />
-      <div className="flex items-center py-4">
+      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} multiple /> <br /> <br />
+      <div className="flex flex-col sm:flex-row w-full sm:w-auto sm:space-x-4">
         <Input
           placeholder={filterwith.replace(/_/g, " ")}
           value={(table.getColumn(filterwith)?.getFilterValue() ?? "")}
@@ -484,6 +484,7 @@ const handleSubmit = (e) => {
           }
           className="max-w-sm"
         />
+       <div className="flex flex-row gap-2">
        <Select  onValueChange={(value) => setfilterwith(value)}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Filtrer avec" className="sr-only sm:not-sr-only" disabled={mode} />
@@ -504,7 +505,7 @@ const handleSubmit = (e) => {
       </Select>
           {/* zzzzz */}
         <Select  onValueChange={(value)=>handlechangedatavalue(value)}>
-        <SelectTrigger className="w-[180px] ml-5">
+        <SelectTrigger className="w-[180px]">
 
           <SelectValue placeholder="Filtrer avec fichier " className="sr-only sm:not-sr-only" disabled={mode} />
           <ListFilter className="h-3.5 w-3.5" />
@@ -521,6 +522,8 @@ const handleSubmit = (e) => {
           </SelectGroup>
           </SelectContent>
         </Select>
+       </div>
+       <br />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -549,7 +552,7 @@ const handleSubmit = (e) => {
           
         </DropdownMenu>
         
-      </div>
+      </div> <br />
       
       <div className="rounded-md border">
         <Table className="table-responsive" >

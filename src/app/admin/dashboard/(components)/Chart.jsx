@@ -18,7 +18,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { array } from "zod";
 
 const caltotale = (datas) => {
   const total = datas.reduce((sum, i) => {
@@ -90,32 +89,32 @@ const chartConfig = {
 export default function Chart(props) {
   const [startday, setstartday] = useState();
   const [lastday, setlastday] = useState();
-  const lengthIntra = props.data.filter((i) => i.INTRA_OU_INTER === "INTRA");
-  const lengthInter = props.data.filter((i) => i.INTRA_OU_INTER === "INTER");
+  
+  const lengthIntra = props.data.filter((i) => i[props.subject] === props.param1);
+  const lengthInter = props.data.filter((i) => i[props.subject] === props.param2);
 
   const chartData = [
-    { browser: "INTRA", visitors: lengthIntra.length, fill: "var(--color-chrome)" },
-    { browser: "INTER", visitors: lengthInter.length, fill: "var(--color-safari)" }
+    { browser: props.param1, visitors: lengthIntra.length, fill: "var(--color-chrome)" },
+    { browser: props.param2, visitors: lengthInter.length, fill: "var(--color-safari)" }
   ];
 
-  const listdates = props.data.map((i) => i.Date_de_Livraison);
+  const listdates = props.data.map((i) => i.Date_de_Livraison).sort();
 
   useEffect(() => {
     if (listdates.length > 0) {
-      setlastday(listdates[0]);
-      setstartday(listdates[listdates.length - 1]);
+      setstartday(listdates[0]);
+      setlastday(listdates[listdates.length - 1]);
     }
   }, [listdates]);
 
   const getFormattedRange = (time) => {
-    if (startday && lastday) {
+    if (time) {
       const date = new Date(time);
-
-      const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
-      const weekdayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
-      const year = new Intl.DateTimeFormat('en-US', { year: 'numeric' }).format(date);
-      const formattedDate = `${weekdayName}, ${monthName}, ${year}`; 
-      return formattedDate
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        year: 'numeric',
+      });
     }
     return 'Loading...';
   };
@@ -129,13 +128,10 @@ export default function Chart(props) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Stats for Inter and Intra</CardTitle>
-        <CardDescription className="text capitalize text-xs">{getFormattedRange(startday)}
-        {/* <span>
-          <svg className="m-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style={{ display: "inline", fill: "white" }} width={12}><path  d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
-        </span> */}
-        -
-          {getFormattedRange(lastday)}</CardDescription>
+        <CardTitle>Stats for {props.param1} and {props.param2}</CardTitle>
+        <CardDescription className="text capitalize text-xs">
+          {getFormattedRange(startday)} - {getFormattedRange(lastday)}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -191,9 +187,9 @@ export default function Chart(props) {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by {percentageDifference}% <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the selected period
-        </div>
+        {/* <div className="leading-none text-muted-foreground">
+        Affichage du nombre total de Produits au cours de cette semaine
+        </div> */}
       </CardFooter>
     </Card>
   );

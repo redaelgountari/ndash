@@ -1,22 +1,23 @@
-import React from 'react'
-import db from '@/lib/db';
+import React from 'react';
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs'
-import { stat } from 'fs';
+import bcrypt from 'bcryptjs';
+import { db, sql } from '@vercel/postgres';
 
-export async function POST(req,res) {
+export async function POST(req) {
+  const client = await db.connect();
+  try {
+    const { name, email, password } = await req.json();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  try{
-    const {name,email,password} = await req.json()
-    const hasedpassword = await bcrypt.hash(password,10)
-    const insert = db.query(
-      `INSERT INTO users(name,email,password) values(?,?,?)`,[
-        name,email,hasedpassword
-      ]
-    )
-    return NextResponse.json({massage:'User created successfully'},{status:200})
-  }catch(error){
+    await client.sql`
+      INSERT INTO users(name, email, password) VALUES (${name}, ${email}, ${hashedPassword})
+      ON CONFLICT (email) DO NOTHING`; 
+
+    return NextResponse.json({ message: 'User created successfully' }, { status: 200 });
+  } catch (error) {
     console.error('Error inserting data:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  } finally {
+    client.release(); 
   }
 }

@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import db from "@/lib/db";
+import { db } from '@vercel/postgres';
 
 const handler = NextAuth({
   session: {
@@ -18,16 +18,19 @@ const handler = NextAuth({
         if (!credentials?.email || !credentials.password) {
           throw new Error("Email and password are required.");
         }
+        
+        const client = await db.connect();
 
         try {
-          const query = "SELECT * FROM users WHERE email = ?";
-          const response = await db.query(query, [credentials.email]);
+          // Use parameterized query syntax correctly
+          const query = "SELECT * FROM users WHERE email = $1"; // Using $1 for PostgreSQL
+          const { rows } = await client.sql`${sql`${query}`, credentials.email}`; // Properly bind the email parameter
 
-          if (response.length === 0 || response[0].length === 0) {
+          if (rows.length === 0) {
             throw new Error("User not found.");
           }
 
-          const user = response[0][0];
+          const user = rows[0];
 
           const passwordCorrect = await compare(credentials.password, user.password);
 
@@ -42,6 +45,8 @@ const handler = NextAuth({
         } catch (error) {
           console.error("Error during user authentication:", error.message);
           throw new Error("Authentication failed.");
+        } finally {
+          client.release(); // Always release the client back to the pool
         }
       },
     }),

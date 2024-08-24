@@ -7,8 +7,8 @@ async function getData() {
     try {
         const response = await axios.get('http://localhost:3000/api/recive');
         return {
-            data: response.data.data[0],
-            titles: response.data.titles[0]
+            data: response.data.data,
+            titles: response.data.titles
         };
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -26,7 +26,6 @@ export default async function Page() {
          </div>
             </div>
         )
-       
     }
 
     return (

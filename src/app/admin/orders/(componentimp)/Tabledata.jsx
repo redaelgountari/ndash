@@ -207,9 +207,9 @@ export default function DataTableimport(props) {
 const sendDataToServer = async (dataToSend) => {
   try {
     const response = await axios.post('/api/import', dataToSend);
-    setData(response.data.data[0]);
-    settitre(response.data.titles[0]);
-    console.log('Données envoyées avec succès au serveur :', response.data);
+    setData(response.data.data);
+    settitre(response.data.titles);
+    console.log('Données envoyées avec succès au serveur :', response.data.titles);
 } catch (error) {
     console.error('Erreur lors de l\'envoi des données au serveur:', error);
     

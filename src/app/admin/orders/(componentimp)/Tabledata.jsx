@@ -361,16 +361,17 @@ const handleSubmit = (e) => {
     {
       accessorKey: "Statut",
       header: () => <div>STATUT</div>,
-      cell: ({ row }) =>{
-       const value = row.getValue('Statut');
-        if (value === "Completed") {
-          return <Badge className="bg-lime-700">{row.getValue("Statut")}</Badge>
-        }
-        else{
-          return <Badge variant="destructive">{row.getValue("Statut")}</Badge>
-        }
-        }
-      
+      cell: ({ row }) => {
+        const value = row.getValue('Statut');
+        return (
+          <Badge 
+            key={row.index} // Add key prop here
+            variant={value === "Completed" ? "success" : "destructive"}
+          >
+            {row.getValue("Statut")}
+          </Badge>
+        );
+      },
     },
     {
       id: "actions",

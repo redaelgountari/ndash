@@ -106,7 +106,7 @@ export default function DataTableimport(props) {
     "POIDS": "POIDS",
     "Statut": "Statut"
   };
- 
+  
   const handleFileUpload = (e) => {
     const files = e.target.files; // Get all selected files
     const fileReaders = []; // Array to hold FileReader instances

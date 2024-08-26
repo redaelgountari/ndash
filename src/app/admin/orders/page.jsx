@@ -5,7 +5,7 @@ import axios from 'axios';
 import "./style.css"; 
 async function getData() {
     try {
-        const response = await axios.get('https://ndash-six.vercel.app/api/recive',{
+        const response = await axios.get('https://hairzaman_dash.app/api/recive',{
             cache : 'no-store'
         });
         return {

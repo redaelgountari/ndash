@@ -365,13 +365,14 @@ const handleSubmit = (e) => {
         const value = row.getValue('Statut');
         return (
           <Badge 
-            key={row.index} // Add key prop here
+            key={row.index} // Add this key prop here
             variant={value === "Completed" ? "success" : "destructive"}
           >
             {row.getValue("Statut")}
           </Badge>
         );
-      },
+      }
+      
     },
     {
       id: "actions",

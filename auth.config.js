@@ -1,6 +1,6 @@
 export const authConfig = {
   pages: {
-    signIn: "/Login",
+    signIn: "/",
   },
   callbacks: {
     async authorized({ token, req }) {

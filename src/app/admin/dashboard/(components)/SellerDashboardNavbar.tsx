@@ -1,4 +1,3 @@
-// import { AvatarDropdown } from '@/app/(cpnotrouted)/logout'
 import { ModeToggle } from '../../../(cpnotrouted)/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogClose } from '@/components/ui/dialog'

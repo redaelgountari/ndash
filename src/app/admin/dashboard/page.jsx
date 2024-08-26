@@ -4,7 +4,7 @@ import axios from 'axios';
 import { getServerSession } from 'next-auth';
 async function getData() {
     try {
-        const response = await axios.get('http://localhost:3000/api/recive');
+        const response = await axios.get('https://ndash-one.vercel.app/api/recive');
         return {
             data: response.data.data,
             titles: response.data.titles

@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const fetchData = async (dispatch) => {
   try {
-    const response = await axios.get('http://localhost:3000/api/recive');
+    const response = await axios.get('https://ndash-one.vercel.app/api/recive');
     dispatch(setdata(response.data.data[0], response.data.titles[0])); // Dispatch the data to the store
   } catch (error) {
     console.error('Error fetching data:', error);

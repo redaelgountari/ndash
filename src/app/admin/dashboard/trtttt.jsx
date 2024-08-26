@@ -84,7 +84,7 @@ import axios from 'axios'
 async function getData() {
 
     try {
-      const response = await axios.get("http://localhost:3000/api/recive");
+      const response = await axios.get("https://ndash-one.vercel.app/api/recive");
       return response.data.data[0]|| [];
     } catch (error) {
       console.error("Error fetching data:", error);

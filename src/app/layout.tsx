@@ -27,7 +27,7 @@ export default async  function RootLayout({ children }: RootLayoutProps) {
         "min-h-screen bg-background font-sans antialiased",
         fontSans.variable
       )}>
-        <AuthProvider session={session}>
+        {/* <AuthProvider session={session}> */}
         <ThemeProvider 
           attribute="class"
           defaultTheme="system"
@@ -36,7 +36,7 @@ export default async  function RootLayout({ children }: RootLayoutProps) {
         >
           {children}
         </ThemeProvider>
-        </AuthProvider>
+        {/* </AuthProvider> */}
       </body>
     </html>
   )

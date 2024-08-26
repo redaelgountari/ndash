@@ -1,14 +1,15 @@
-import mysql from 'mysql2';
+// lib/db.js
+import pg from 'pg';
 
-const pool = mysql.createPool({
-  host: "127.0.0.1",        
-  user: "root",             
-  password: "",    
-  database: "hairzaman"
+const { Pool } = pg;
+
+// Create a new pool instance
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL, // Ensure this environment variable is set in Vercel
 });
 
-const db = pool.promise();
+// Function to query the database
+export const query = (text, params) => pool.query(text, params);
 
-export default db;
-
-
+// Optional: Export the pool for more advanced use
+export default pool;

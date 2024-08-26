@@ -22,9 +22,7 @@ const handler = NextAuth({
         const client = await db.connect();
 
         try {
-          // Use parameterized query syntax correctly
-          const query = "SELECT * FROM users WHERE email = $1"; // Using $1 for PostgreSQL
-          const { rows } = await client.sql`${sql`${query}`, credentials.email}`; // Properly bind the email parameter
+          const { rows } = await client.sql`SELECT * FROM users WHERE email = ${credentials.email}`; 
 
           if (rows.length === 0) {
             throw new Error("User not found.");

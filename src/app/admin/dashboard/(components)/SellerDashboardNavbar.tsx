@@ -1,4 +1,4 @@
-import { AvatarDropdown } from '@/app/(cpnotrouted)/logout'
+// import { AvatarDropdown } from '@/app/(cpnotrouted)/logout'
 import { ModeToggle } from '../../../(cpnotrouted)/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogClose } from '@/components/ui/dialog'
@@ -69,7 +69,7 @@ function AdminDashboardNavbar({ children }: { children: ReactNode }) {
         <div className="flex justify-center items-center gap-2 ml-auto">
           {/* <UserProfile /> */}
           <ModeToggle />
-          <AvatarDropdown/>
+          {/* <AvatarDropdown/> */}
         </div>
       </header>
       {children}

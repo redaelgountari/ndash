@@ -2,8 +2,8 @@
 
 import { ReactNode } from 'react';
 import '../globals.css';
-import SellerDashboardSidebar from './dashboard/(components)/SellerDashboardSidebar';
-import AdminDashboardNavbar from './dashboard/(components)/SellerDashboardNavbar';
+import SellerDashboardSidebar from './dashboard/(components)/Dash';
+import AdminDashboardNavbar from './dashboard/(components)/Navbar';
 import { Provider } from 'react-redux';
 import { store } from '../store'
 

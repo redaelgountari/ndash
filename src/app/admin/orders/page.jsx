@@ -1,40 +1,56 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import DataTableimport from "../orders/(componentimp)/Tabledata";
 import Export from "../orders/(componentimp)/Export";
 import axios from 'axios';
-import "./style.css"; 
-async function getData() {
-    try {
-        const response = await axios.get('https://hairzaman_dash.app/api/recive',{
-            cache : 'no-store'
-        });
-        return {
-            data: response.data.data,
-            titles: response.data.titles
-        };
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
-    }
-}
+import "./style.css";
+import { setdata } from '@/app/action';
 
-export default async function Page() {
-    const data = await getData();
-    if (!data) {
+export default function Page() {
+    const dispatch = useDispatch();
+    const { datas, titles } = useSelector(state => state);
+    const loading = !datas.length && !titles.length; 
+    const error = useSelector(state => state.error);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await axios.get('/api/recive', {
+                    cache: 'no-store'
+                });
+                dispatch(setdata(response.data.data, response.data.titles));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchData();
+    }, [dispatch]);
+
+    if (loading) {
+        return (
+            <div className="loader">
+                <div data-glitch="Loading..." className="glitch">Loading...</div>
+            </div>
+        );
+    }
+
+    if (error) {
         return (
             <div className="error">
-                <div class="loader">
-            <div data-glitch="Error loading data." class="glitch">Error loading data.</div>
-         </div>
+                <div className="loader">
+                    <div data-glitch="Error loading data." className="glitch">Error loading data.</div>
+                </div>
             </div>
-        )
+        );
     }
 
     return (
         <div>
-            <DataTableimport data={data.data} titles={data.titles} />
-            {/* <Export data={data.data} /> */}
+            <DataTableimport data={datas} titles={titles} />
+            {/* <Export data={datas} /> */}
         </div>
     );
-    
 }

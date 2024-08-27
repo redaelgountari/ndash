@@ -79,8 +79,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { setdata } from '@/app/action';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function DataTableimport(props) {
+  const dispatch = useDispatch();
+
   const [data, setData] = useState(props.data);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -209,6 +213,8 @@ const sendDataToServer = async (dataToSend) => {
     const response = await axios.post('/api/import', dataToSend);
     setData(response.data.data);
     settitre(response.data.titles);
+    dispatch(setdata(response.data.data, response.data.titles));
+
     console.log('Données envoyées avec succès au serveur :', response.data.titles);
 } catch (error) {
     console.error('Erreur lors de l\'envoi des données au serveur:', error);

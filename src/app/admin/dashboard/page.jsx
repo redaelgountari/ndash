@@ -1,41 +1,57 @@
-import React from 'react';
-import Dash from './Dash'
-import axios from 'axios';
-import { getServerSession } from 'next-auth';
-async function getData() {
-    try {
-        const response = await axios.get('https://hairzaman_dash.vercel.app/api/recive',{
-            cache : 'no-store'
-        });
-        return {
-            data: response.data.data,
-            titles: response.data.titles
-        };
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
-    }
-}
+"use client";
 
-export default async function Page() {
-    const data = await getData();
-    const session = await getServerSession()
-    if (!data) {
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import DataTableimport from "../orders/(componentimp)/Tabledata";
+import Export from "../orders/(componentimp)/Export";
+import axios from 'axios';
+import Dash from './Dash';
+import { setdata } from '@/app/action';
+
+export default function Page() {
+    const dispatch = useDispatch();
+    const { datas, titles } = useSelector(state => state);
+    const loading = !datas.length && !titles.length; // Assume loading if data and titles are empty
+    const error = useSelector(state => state.error);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await axios.get('/api/recive', {
+                    cache: 'no-store'
+                });
+                dispatch(setdata(response.data.data, response.data.titles));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Optionally, you could dispatch an error action to store this in the Redux state.
+            }
+        }
+
+        fetchData();
+    }, [dispatch]);
+
+    if (loading) {
+        return (
+            <div className="loader">
+                <div data-glitch="Loading..." className="glitch">Loading...</div>
+            </div>
+        );
+    }
+
+    if (error) {
         return (
             <div className="error">
-                <div class="loader">
-            <div data-glitch="Error loading data." class="glitch">Error loading data.</div>
-         </div>
+                <div className="loader">
+                    <div data-glitch="Error loading data." className="glitch">Error loading data.</div>
+                </div>
             </div>
-        )
-       
+        );
     }
 
     return (
         <div>
-           <Dash data={data.data}/> 
-           {/* {session.user.email} */}
+            <Dash data={datas} /> 
+            {/* <Export data={datas} /> */}
         </div>
     );
-    
 }

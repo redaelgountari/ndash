@@ -128,7 +128,7 @@ export default function Chart(props) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Stats for {props.param1} and {props.param2}</CardTitle>
+        <CardTitle>Statistiques pour INTRA et INTER</CardTitle>
         <CardDescription className="text capitalize text-xs">
           {getFormattedRange(startday)} - {getFormattedRange(lastday)}
         </CardDescription>

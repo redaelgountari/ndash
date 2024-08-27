@@ -167,7 +167,7 @@ const ChartQ = ({ data, time }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart - Stacked + Legend</CardTitle>
+        <CardTitle>Statistiques pour les travaux terminés et renvoyés à envoyer </CardTitle>
         <CardDescription>{getFormattedRange(startday)} - {getFormattedRange(lastday)}</CardDescription>
       </CardHeader>
       <CardContent>
